@@ -13,8 +13,12 @@ import { Select, SelectContent, SelectValue, SelectTrigger, SelectGroup, SelectI
 import { SelectLabel } from "@radix-ui/react-select";
 import { toast } from "sonner";
 
+interface DokterWithPerformance extends Idokter {
+    Kunjungan?: { count: number }[];
+}
+
 const dokterPage = () => {
-    const [dokter, setDokter] = useState<Idokter[]>([]);
+    const [dokter, setDokter] = useState<DokterWithPerformance[]>([]);
     const [createDialog, setCreateDialog] = useState(false);    
     const [selectedDokter, setSelectedDokter] = useState<{
         dokter: Idokter;
@@ -22,7 +26,7 @@ const dokterPage = () => {
     } | null>(null);
 
     const fetchMenu = async () => {
-      const {data, error} = await supabase.from('dokter').select('*');  
+      const {data, error} = await supabase.from('dokter').select('*, Kunjungan (count)');  
       if (error) {
         console.log('Error', error);
       } else {
@@ -48,6 +52,7 @@ const dokterPage = () => {
                 }
                 toast('dokter berhasil ditambahkan');
                 setCreateDialog(false);
+                fetchMenu();
             }
         } catch (error) {
             console.log('Error', error);
@@ -67,6 +72,7 @@ const dokterPage = () => {
                 setDokter((prev) => prev.filter((dokter) => dokter.id_dokter !== selectedDokter.dokter.id_dokter));
                 toast('dokter berhasil dihapus');
                 setSelectedDokter(null);
+                fetchMenu();
             }
         } catch (err) {
             console.log('Error', err);
@@ -90,6 +96,7 @@ const dokterPage = () => {
                 setDokter((prev) => prev.map((dokter) => dokter.id_dokter === id ? {...dokter, ...newData} : dokter));
                 toast('dokter berhasil diedit');
                 setSelectedDokter(null);
+                fetchMenu();
             }
         } catch (err) {
             console.log('Error', err);
@@ -183,6 +190,46 @@ const dokterPage = () => {
             </Table>
         </div>
 
+        <div className="mt-16 mb-6">
+            <div className="text-2xl font-bold mb-2">Laporan Kinerja Dokter</div>
+            <p className="text-gray-500 mb-4 text-sm">Rekapitulasi total pasien yang ditangani oleh setiap dokter.</p>
+            
+            <div className="border rounded-md shadow-sm bg-gray-50/50">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="font-bold">Nama Dokter</TableHead>
+                            <TableHead className="font-bold">Spesialisasi</TableHead>
+                            <TableHead className="font-bold text-center">Total Pasien</TableHead>
+                            <TableHead className="font-bold text-center">Status Keaktifan</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {dokter.map((doc) => {
+                            const totalPasien = doc.Kunjungan?.[0]?.count || 0;        
+                            return (
+                                <TableRow key={doc.id_dokter}>
+                                    <TableCell className="font-medium">{doc.nama_dokter}</TableCell>
+                                    <TableCell>{doc.spesialisasi}</TableCell>
+                                    <TableCell className="text-center text-lg">{totalPasien}</TableCell>
+                                    <TableCell className="text-center">
+                                        {totalPasien > 0 ? (
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                Aktif
+                                            </span>
+                                        ) : (
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                Belum Ada Pasien
+                                            </span>
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+            </div>
+        </div>            
 
         <Dialog open={selectedDokter !=null && selectedDokter.action === 'delete'} onOpenChange={(open) => {
             if (!open) {
