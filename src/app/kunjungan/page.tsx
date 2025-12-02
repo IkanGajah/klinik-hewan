@@ -4,6 +4,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { FormEvent, useEffect, useState } from 'react';
 import type { Ikunjungan } from '@/types/kunjungan';
+import type { Ihewan } from '@/types/hewan';
+import type { Idokter } from '@/types/dokter';
 import {supabase} from '@/lib/supabase';
 import { Ellipsis } from "lucide-react";
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
@@ -14,6 +16,8 @@ import { toast } from "sonner";
 
 const kunjunganPage = () => {
     const [kunjungan, setKunjungan] = useState<Ikunjungan[]>([]);
+    const [hewan, setHewan] = useState<Map<string, Ihewan>>(new Map());
+    const [Idokter, setIdokter] = useState<Map<string, Idokter>>(new Map());
     const [createDialog, setCreateDialog] = useState(false);
     const [selectedKunjungan, setSelectedKunjungan] = useState<{
         kunjungan: Ikunjungan;
@@ -29,9 +33,31 @@ const fetchMenu = async () => {
     }
 };
 
+const fetchHewan = async () => {
+    const {data, error} = await supabase.from('hewan').select('*');  
+    if (error) {
+        console.log('Error fetching hewan', error);
+    } else {
+        const hewanMap = new Map(data?.map((h) => [h.id_hewan, h]) ?? []);
+        setHewan(hewanMap);
+    }
+};
+
+const fetchDokter = async () => {
+    const {data, error} = await supabase.from('dokter').select('*');  
+    if (error) {
+        console.log('Error fetching dokter', error);
+    } else {
+        const dokterMap = new Map(data?.map((d) => [d.id_dokter, d]) ?? []);
+        setIdokter(dokterMap);
+    }
+};
+
 useEffect (() => {
     fetchMenu();
-}, [supabase]);
+    fetchHewan();
+    fetchDokter();
+}, []);
 
 const handleAddKunjungan = async (e:FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -95,6 +121,16 @@ const handleEditKunjungan = async (e:FormEvent<HTMLFormElement>) => {
         console.log('Error', err);
     }
 fetchMenu();
+};
+
+  const getNamaHewan = (idHewan: string | null | undefined) => {
+    if (!idHewan) return '...';
+    return hewan.get(idHewan)?.nama ?? 'Nama (Unknown)';
+  };
+
+const getNamaDokter = (idDokter: string | null | undefined) => {
+    if (!idDokter) return '...';
+    return Idokter.get(idDokter)?.nama_dokter ?? 'Nama (Unknown)';
 };
 
 return (
@@ -175,8 +211,8 @@ return (
                     {kunjungan && kunjungan.length > 0 ? (kunjungan.map(k => (
                     <TableRow key={k.id_kunjungan}>
                         <TableCell>{k.id_kunjungan}</TableCell>
-                        <TableCell>{k.id_hewan}</TableCell>
-                        <TableCell>{k.id_dokter}</TableCell>
+                        <TableCell>{k.id_hewan + "-" + getNamaHewan(k.id_hewan)}</TableCell>
+                        <TableCell>{k.id_dokter + "-" + getNamaDokter(k.id_dokter)}</TableCell>
                         <TableCell>{k.tanggal_kunjungan}</TableCell>
                         <TableCell>{k.berat_badan_saat_kunjungan}</TableCell>
                         <TableCell>{k.keluhan_awal}</TableCell>
