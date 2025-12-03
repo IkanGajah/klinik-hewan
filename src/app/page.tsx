@@ -11,12 +11,12 @@ export default function DashboardPage() {
           <p className="text-gray-600 text-sm">Cari kontak Dokter & Klien (Union).</p>
         </Link>
 
-        <Link href="/" className="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition border-l-4 border-green-500">
+        <Link href="/dokter" className="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition border-l-4 border-green-500">
           <h2 className="text-xl font-semibold mb-2">📊 Laporan Dokter</h2>
           <p className="text-gray-600 text-sm">Lihat performa & keaktifan (Left Join).</p>
         </Link>
 
-        <Link href="/" className="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition border-l-4 border-purple-500">
+        <Link href="/kunjungan" className="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition border-l-4 border-purple-500">
           <h2 className="text-xl font-semibold mb-2">🧾 Cetak Struk</h2>
           <p className="text-gray-600 text-sm">Contoh cetak struk ID #1 (Inner Join).</p>
         </Link>

@@ -1,4 +1,5 @@
 'use client';
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { FormEvent, useEffect, useState } from 'react';
@@ -9,12 +10,10 @@ import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMen
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle,DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectValue, SelectTrigger, SelectGroup, SelectItem } from "@/components/ui/select";
-import { SelectLabel } from "@radix-ui/react-select";
 import { toast } from "sonner";
 
 interface DokterWithPerformance extends Idokter {
-    Kunjungan?: { count: number }[];
+    kunjungan?: { count: number }[];
 }
 
 const dokterPage = () => {
@@ -24,19 +23,36 @@ const dokterPage = () => {
         dokter: Idokter;
         action: 'edit' | 'delete';
     } | null>(null);
+    const [editForm, setEditForm] = useState({
+        id_dokter: '',
+        nama_dokter: '',
+        spesialisasi: '',
+        no_telepon: ''
+    });
 
     const fetchMenu = async () => {
-      const {data, error} = await supabase.from('dokter').select('*, Kunjungan (count)');  
+      const {data, error} = await supabase.from('dokter').select('*, kunjungan!left(id_kunjungan)').order('id_dokter');  
       if (error) {
         console.log('Error', error);
       } else {
-        setDokter(data) ?? [];
+        console.log('Data dokter:', data);
+        setDokter(data ?? []);
       }
     };
 
     useEffect (() => { 
         fetchMenu();
-    }, [supabase]);
+        if (selectedDokter?.action === 'edit' && selectedDokter.dokter) {
+        setEditForm({
+            id_dokter: selectedDokter.dokter.id_dokter ?? '',
+            nama_dokter: selectedDokter.dokter.nama_dokter ?? '',
+            spesialisasi: selectedDokter.dokter.spesialisasi ?? '',
+            no_telepon: selectedDokter.dokter.no_telepon ?? ''
+        });
+        } else {
+            setEditForm({ id_dokter: '', nama_dokter: '', spesialisasi: '', no_telepon: '' });
+        }
+    }, [selectedDokter]);
 
     const handleAddDokter = async (e:FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -152,19 +168,19 @@ const dokterPage = () => {
                     <TableRow>
                         <TableHead className="text-neutral-700 font-bold">ID Dokter</TableHead>
                         <TableHead className="text-neutral-700 font-bold">Nama</TableHead>
-                        <TableHead className="text-neutral-700 font-bold">Specialisasi</TableHead>
+                        <TableHead className="text-neutral-700 font-bold">Spesialisasi</TableHead>
                         <TableHead className="text-neutral-700 font-bold">Nomor Telepon</TableHead>
                     </TableRow>
                 </TableHeader>
 
                 <TableBody>
                     {dokter && dokter.length > 0 ? (
-                    dokter.map((dokter: Idokter) => (
-                    <TableRow key={dokter.id_dokter}>
-                        <TableCell>{dokter.id_dokter}</TableCell>
-                        <TableCell>{dokter.nama_dokter}</TableCell>
-                        <TableCell>{dokter.spesialisasi}</TableCell>
-                        <TableCell>{dokter.no_telepon}</TableCell>
+                    dokter.map((d) => (
+                    <TableRow key={d.id_dokter}>
+                        <TableCell>{d.id_dokter}</TableCell>
+                        <TableCell>{d.nama_dokter}</TableCell>
+                        <TableCell>{d.spesialisasi}</TableCell>
+                        <TableCell>{d.no_telepon}</TableCell>
                         <TableCell>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild className="cursor-pointer">
@@ -174,8 +190,8 @@ const dokterPage = () => {
                                     <DropdownMenuLabel className="font-bold">Action</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
-                                        <DropdownMenuItem onClick={() => setSelectedDokter({dokter, action: 'edit'})} >Edit</DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => setSelectedDokter({dokter, action: 'delete'})} className="text-red-400">Delete</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setSelectedDokter({dokter : d, action: 'edit'})} >Edit</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setSelectedDokter({dokter : d, action: 'delete'})} className="text-red-400">Delete</DropdownMenuItem>
                                     </DropdownMenuGroup>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -191,27 +207,25 @@ const dokterPage = () => {
         </div>
 
         <div className="mt-16 mb-6">
-            <div className="text-2xl font-bold mb-2">Laporan Kinerja Dokter</div>
+            <div className="text-3xl font-bold">Laporan Kinerja Dokter</div>
             <p className="text-gray-500 mb-4 text-sm">Rekapitulasi total pasien yang ditangani oleh setiap dokter.</p>
-            
-            <div className="border rounded-md shadow-sm bg-gray-50/50">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="font-bold">Nama Dokter</TableHead>
-                            <TableHead className="font-bold">Spesialisasi</TableHead>
-                            <TableHead className="font-bold text-center">Total Pasien</TableHead>
-                            <TableHead className="font-bold text-center">Status Keaktifan</TableHead>
+                            <TableHead className="text-neutral-700 font-bold">Nama Dokter</TableHead>
+                            <TableHead className="text-neutral-700 font-bold">Spesialisasi</TableHead>
+                            <TableHead className="text-neutral-700 font-bold text-center">Total Pasien</TableHead>
+                            <TableHead className="text-neutral-700 font-bold text-center">Status Keaktifan</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {dokter.map((doc) => {
-                            const totalPasien = doc.Kunjungan?.[0]?.count || 0;        
+                        {dokter.map((d) => {
+                            const totalPasien = d.kunjungan?.length || 0;        
                             return (
-                                <TableRow key={doc.id_dokter}>
-                                    <TableCell className="font-medium">{doc.nama_dokter}</TableCell>
-                                    <TableCell>{doc.spesialisasi}</TableCell>
-                                    <TableCell className="text-center text-lg">{totalPasien}</TableCell>
+                                <TableRow key={d.id_dokter}>
+                                    <TableCell>{d.nama_dokter}</TableCell>
+                                    <TableCell>{d.spesialisasi}</TableCell>
+                                    <TableCell className="text-center">{totalPasien}</TableCell>
                                     <TableCell className="text-center">
                                         {totalPasien > 0 ? (
                                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -228,7 +242,6 @@ const dokterPage = () => {
                         })}
                     </TableBody>
                 </Table>
-            </div>
         </div>            
 
         <Dialog open={selectedDokter !=null && selectedDokter.action === 'delete'} onOpenChange={(open) => {
@@ -248,7 +261,7 @@ const dokterPage = () => {
         </Dialog>
 
 
-         <Dialog open={selectedDokter !=null && selectedDokter.action === 'edit'} onOpenChange={(open) => {
+        <Dialog open={selectedDokter !=null && selectedDokter.action === 'edit'} onOpenChange={(open) => {
             if (!open) {
                 setSelectedDokter(null);
             }
@@ -262,19 +275,19 @@ const dokterPage = () => {
                         <div className="grid w-full gap-4">
                             <div className="grid w-full gap-1.5">
                                 <Label htmlFor="id_dokter">ID Dokter</Label>
-                                <Input id="id_dokter" name="id_dokter" placeholder="Masukkan ID Dokter" required />
+                                <Input id="id_dokter" name="id_dokter" value={editForm.id_dokter} onChange={(e) => setEditForm({...editForm, id_dokter: e.target.value})} placeholder="Masukkan ID Dokter" required />
                             </div>
                             <div className="grid w-full gap-1.5">
                                 <Label htmlFor="nama_dokter">Nama Dokter</Label>
-                                <Input id="nama_dokter" name="nama_dokter" placeholder="Masukkan Nama Dokter" required />
+                                <Input id="nama_dokter" name="nama_dokter" value={editForm.nama_dokter} onChange={(e) => setEditForm({...editForm, nama_dokter: e.target.value})} placeholder="Masukkan Nama Dokter" required />
                             </div>
                             <div className="grid w-full gap-1.5">
                                 <Label htmlFor="spesialisasi">Spesialisasi</Label>
-                                <Input id="spesialisasi" name="spesialisasi" placeholder="Masukkan Spesialisasi" required />
+                                <Input id="spesialisasi" name="spesialisasi" value={editForm.spesialisasi} onChange={(e) => setEditForm({...editForm, spesialisasi: e.target.value})} placeholder="Masukkan Spesialisasi" required />
                             </div>
                             <div className="grid w-full gap-1.5">
                                 <Label htmlFor="no_telepon">Nomor Telepon</Label>
-                                <Input id="no_telepon" name="no_telepon" placeholder="Masukkan Nomor Telepon" required />
+                                <Input id="no_telepon" name="no_telepon" value={editForm.no_telepon} onChange={(e) => setEditForm({...editForm, no_telepon: e.target.value})} placeholder="Masukkan Nomor Telepon" required />
                             </div>
                         </div>
                         <DialogFooter>

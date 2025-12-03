@@ -2,9 +2,7 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { FormEvent, useEffect, useState } from 'react';
-import type { Idokter } from '@/types/dokter';
-import type { Ihewan } from '@/types/hewan';
+import { useState, useEffect, FormEvent } from "react"
 import type { Ipemilik } from '@/types/pemilik';
 import {supabase} from '@/lib/supabase';
 import { Ellipsis } from "lucide-react";
@@ -13,255 +11,251 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle,DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-
-// const clientPage = () => {
-//     const [dokter, setDokter] = useState<Idokter[]>([]);
-//     const [createDialog, setCreateDialog] = useState(false);
-//     const [selectedDokter, setSelectedDokter] = useState<{
-//         dokter: Idokter;
-//         action: 'edit' | 'delete';
-//     } | null>(null);
-
-// const fetchMenu = async () => {
-//     const {data, error} = await supabase.from('dokter').select('*').order('id_dokter');  
-//     if (error) {
-//         console.log('Error', error);
-//     } else {
-//         setDokter(data ?? []);
-//     }
-// };
-
-// useEffect (() => {
-//     fetchMenu();
-// }, [supabase]);
-
-// const handleAddClient = async (e:FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     const formData = new FormData(e.currentTarget);
-//     try {
-//         const { data, error } = await supabase.from('dokter').insert(Object.fromEntries(formData)).select();
-//         if (error) {
-//             console.log('Error', error);
-//         } else {
-//             if (data) {
-//                 setDokter((prev) => [...data, ...prev]);
-//             }
-//             toast('dokter berhasil ditambahkan');
-//             setCreateDialog(false);
-//         }
-//     } catch (error) {
-//         console.log('Error', error);
-//     }
-//     fetchMenu();
-// };
-
-// const handleDeleteClient = async () => {
-//     if (!selectedDokter) {
-//         console.log('No selected menu — abort delete');
-//         return;
-//     }
-//     try {
-//         const id_dokter = selectedDokter.dokter.id_dokter;
-//         const { data, error } = await supabase.from('dokter').delete().eq('id_dokter', id_dokter);
-//         if (error) console.log('Error', error);
-//         else {
-//             setDokter((prev) => prev.filter((dokter) => dokter.id_dokter !== selectedDokter.dokter.id_dokter));
-//             toast('dokter berhasil dihapus');
-//             setSelectedDokter(null);
-//         }
-//     } catch (err) {
-//         console.log('Error', err);
-//     }
-//     fetchMenu();
-// };
-
-// const handleEditClient = async (e:FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     const formData = new FormData(e.currentTarget);
-//     const newData = Object.fromEntries(formData);
-//     if (!selectedDokter?.dokter?.id_dokter) {
-//         console.log('No selected menu id — abort edit');
-//         return;
-//     }
-//     try {
-//         const id = selectedDokter.dokter.id_dokter;
-//         const { error } = await supabase.from('dokter').update(newData).eq('id_dokter', id);
-//         if (error) {
-//             console.log('Error', error);
-//         } else {
-//             setDokter((prev) => prev.map((dokter) => dokter.id_dokter === id ? {...dokter, ...newData} : dokter));
-//             toast('dokter berhasil diedit');
-//             setSelectedDokter(null);
-//         }
-//     } catch (err) {
-//         console.log('Error', err);
-//     }
-// fetchMenu();
-// };
-
-// app/pemilik/page.tsx
 import Link from 'next/link';
 
-export default async function PemilikPage() {
-  const { data: pemilik } = await supabase.from('Pemilik').select('*');
+const pemilikPage = () => {
+    const [createDialog, setCreateDialog] = useState(false);
+    const [pemilik, setPemilik] = useState<Ipemilik[]>([]);
+    const [selectedPemilik, setSelectedPemilik] = useState<{
+        pemilik: Ipemilik;
+        action: 'edit' | 'delete';
+    } | null>(null);
+    const [editForm, setEditForm] = useState({
+        id_pemilik: '',
+        nama_pemilik: '',
+        alamat: '',
+        nomor_telepon: ''
+    });
+
+    const fetchMenu = async () => {
+          const {data, error} = await supabase.from('pemilik').select('*').order('id_pemilik');  
+          if (error) {
+            console.log('Error', error);
+          } else {
+            setPemilik(data ?? []);
+          }
+        };
+    
+    useEffect (() => { 
+        fetchMenu();
+        if (selectedPemilik?.action === 'edit' && selectedPemilik.pemilik) {
+            setEditForm({
+                id_pemilik: selectedPemilik.pemilik.id_pemilik ?? '',
+                nama_pemilik: selectedPemilik.pemilik.nama_pemilik ?? '',
+                alamat: selectedPemilik.pemilik.alamat ?? '',
+                nomor_telepon: selectedPemilik.pemilik.nomor_telepon ?? ''
+            });
+        } else {
+           setEditForm({ id_pemilik: '', nama_pemilik: '', alamat: '', nomor_telepon: '' });
+        }
+    }, [selectedPemilik]);
+
+    const handleAddPemilik = async (e:FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log("Tombol ditekan, fungsi berjalan...");
+        const formData = new FormData(e.currentTarget);
+        try {
+            const { data, error } = await supabase.from('pemilik').insert(Object.fromEntries(formData)).select();
+            if (error) {
+                console.log('Error', error);
+            } else {
+                if (data) {
+                    setPemilik((prev) => [...data, ...prev]);
+                }
+                toast('dokter berhasil ditambahkan');
+                setCreateDialog(false);
+                fetchMenu();
+            }
+        } catch (error) {
+            console.log('Error', error);
+        }
+    };
+
+    const handleDeletePemilik = async () => {
+        if (!selectedPemilik) {
+            console.log('No selected menu — abort delete');
+            return;
+        }
+        try {
+            const id = selectedPemilik.pemilik.id_pemilik;
+            const { data, error } = await supabase.from('pemilik').delete().eq('id_pemilik', id);
+            if (error) console.log('Error', error);
+            else {
+                setPemilik((prev) => prev.filter((pemilik) => pemilik.id_pemilik !== selectedPemilik.pemilik.id_pemilik));
+                toast('pemilik berhasil dihapus');
+                setSelectedPemilik(null);
+                fetchMenu();
+            }
+        } catch (err) {
+            console.log('Error', err);
+        }
+        fetchMenu();
+    };
+
+    const handleEditPemilik = async (e:FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        const newData = Object.fromEntries(formData);
+        if (!selectedPemilik?.pemilik?.id_pemilik) {
+            console.log('No selected menu id — abort edit');
+            return;
+        }
+        try {
+            const id = selectedPemilik.pemilik.id_pemilik;
+            const { error } = await supabase.from('pemilik').update(newData).eq('id_pemilik', id);
+            if (error) {
+                console.log('Error', error);
+            } else {
+                setPemilik((prev) => prev.map((pemilik) => pemilik.id_pemilik === id ? {...pemilik, ...newData} : pemilik));
+                toast('pemilik berhasil diedit');
+                setSelectedPemilik(null);
+                fetchMenu();
+            }
+        } catch (err) {
+            console.log('Error', err);
+        }
+        fetchMenu();
+    };
+    
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">Daftar Pemilik</h1>
-      {/* ... Tabel code ... */}
-      <tbody>
-        {pemilik?.map((p: any) => (
-          <tr key={p.id_pemilik} className="hover:bg-gray-50">
-            <td className="px-6 py-4">{p.id_pemilik}</td>
-            <td className="px-6 py-4">{p.nama_pemilik}</td>
-            <td className="px-6 py-4">{p.nomor_telepon}</td>
-            <td className="px-6 py-4">
-              {/* TOMBOL KE DYNAMIC ROUTE */}
-              <Link 
-                href={`/klien/${p.id_pemilik}`} 
-                className="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700"
-              >
-                Lihat Hewan
-              </Link>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-      {/* ... */}
+    <div className="container mx-auto py-8">
+        <div className="mb-4 w-full flex justify-between">
+            <div className="text-3xl font-bold">Pemilik</div>
+            
+            <Dialog open={createDialog} onOpenChange={setCreateDialog}>
+                <DialogTrigger asChild>
+                    <Button className="font-bold" onClick={() => setCreateDialog(true)}>Add Pemilik</Button>
+                </DialogTrigger>
+
+                <DialogContent className="sm:max-w-md">
+                    <form onSubmit={handleAddPemilik} className="space-y-4">
+                        <DialogHeader>
+                            <DialogTitle className="text-2xl font-bold">Add Pemilik</DialogTitle>
+                            <DialogDescription>Tambahkan Pemilik Dengan Mengisi Form Berikut</DialogDescription>
+                        </DialogHeader>
+                        <div className="grid w-full gap-4">
+                            <div className="grid w-full gap-1.5">
+                                <Label htmlFor="id_pemilik">ID Pemilik</Label>
+                                <Input id="id_pemilik" name="id_pemilik" placeholder="Masukkan ID Pemilik" required />
+                            </div>
+                            <div className="grid w-full gap-1.5">
+                                <Label htmlFor="nama_pemilik">Nama</Label>
+                                <Input id="nama_pemilik" name="nama_pemilik" placeholder="Masukkan Nama" required />
+                            </div>
+                            <div className="grid w-full gap-1.5">
+                                <Label htmlFor="alamat">Alamat</Label>
+                                <Input id="alamat" name="alamat" placeholder="Masukkan Alamat" required />
+                            </div>
+                            <div className="grid w-full gap-1.5">
+                                <Label htmlFor="nomor_telepon">Nomor Telepon</Label>
+                                <Input id="nomor_telepon" name="nomor_telepon" placeholder="Masukkan Nomor Telepon" required />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button type="submit">Tambahkan</Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
+        </div>
+
+        <div>
+            <Table>
+            <TableHeader>
+                <TableRow>
+                <TableHead className="text-neutral-700 font-bold">ID Pemilik</TableHead>
+                <TableHead className="text-neutral-700 font-bold">Nama Pemilik</TableHead>
+                <TableHead className="text-neutral-700 font-bold">Nomor Telepon</TableHead>
+                <TableHead className="text-neutral-700 font-bold">Aksi</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {pemilik.map((p) => (
+                <TableRow key={p.id_pemilik} className="hover:bg-gray-50">
+                    <TableCell>{p.id_pemilik}</TableCell>
+                    <TableCell>{p.nama_pemilik}</TableCell>
+                    <TableCell>{p.alamat}</TableCell>
+                    <TableCell>{p.nomor_telepon}</TableCell>
+                    <TableCell>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild className="cursor-pointer">
+                                    <Ellipsis />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56">
+                                    <DropdownMenuLabel className="font-bold">Action</DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        <DropdownMenuItem>
+                                            <Link href={`/klien/${p.id_pemilik}`} className="w-full block">
+                                                Lihat Hewan
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setSelectedPemilik({pemilik : p, action: 'edit'})} >Edit</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setSelectedPemilik({pemilik : p, action: 'delete'})} className="text-red-400">Delete</DropdownMenuItem>
+                                    </DropdownMenuGroup>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </TableCell>
+                </TableRow>
+                ))}
+            </TableBody>
+            </Table>
+        </div>
+
+        <Dialog open={selectedPemilik !=null && selectedPemilik.action === 'delete'} onOpenChange={(open) => {
+            if (!open) {
+                setSelectedPemilik(null);
+            }
+        }}>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold">Delete Pemilik</DialogTitle>
+                        <DialogDescription>Apakah kamu yakin ingin menghapus pemilik ini {selectedPemilik?.pemilik.nama_pemilik}?</DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <Button onClick={handleDeletePemilik} variant="destructive" className="cursor-pointer">Delete</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
+
+        <Dialog open={selectedPemilik !=null && selectedPemilik.action === 'edit'} onOpenChange={(open) => {
+            if (!open) {
+                setSelectedPemilik(null);
+            }
+        }}>  
+                <DialogContent className="sm:max-w-md">
+                    <form onSubmit={handleEditPemilik} className="space-y-4">
+                        <DialogHeader>
+                            <DialogTitle className="text-2xl font-bold">Add Pemilik</DialogTitle>
+                            <DialogDescription>Tambahkan Pemilik Dengan Mengisi Form Berikut</DialogDescription>
+                        </DialogHeader>
+                        <div className="grid w-full gap-4">
+                            <div className="grid w-full gap-1.5">
+                                <Label htmlFor="id_pemilik">ID Pemilik</Label>
+                                <Input id="id_pemilik" name="id_pemilik" value={editForm.id_pemilik} onChange={(e) => setEditForm({...editForm, id_pemilik: e.target.value})} placeholder="Masukkan ID Pemilik" required />
+                            </div>
+                            <div className="grid w-full gap-1.5">
+                                <Label htmlFor="nama_pemilik">Nama Pemilik</Label>
+                                <Input id="nama_pemilik" name="nama_pemilik" value={editForm.nama_pemilik} onChange={(e) => setEditForm({...editForm, nama_pemilik: e.target.value})} placeholder="Masukkan Nama Pemilik" required />
+                            </div>
+                            <div className="grid w-full gap-1.5">
+                                <Label htmlFor="alamat">Alamat</Label>
+                                <Input id="alamat" name="alamat" value={editForm.alamat} onChange={(e) => setEditForm({...editForm, alamat: e.target.value})} placeholder="Masukkan Alamat" required />
+                            </div>
+                            <div className="grid w-full gap-1.5">
+                                <Label htmlFor="nomor_telepon">Nomor Telepon</Label>
+                                <Input id="nomor_telepon" name="nomor_telepon" value={editForm.nomor_telepon} onChange={(e) => setEditForm({...editForm, nomor_telepon: e.target.value})} placeholder="Masukkan Nomor Telepon" required />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button type="submit">submit</Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
     </div>
   );
 }
-
-// return (
-//     <div className="container mx-auto py-8">
-//         <div className="mb-4 w-full flex justify-between">
-//             <div className="text-3xl font-bold">Dokter</div>
-            
-//             <Dialog open={createDialog} onOpenChange={setCreateDialog}>
-//                 <DialogTrigger asChild>
-//                     <Button className="font-bold" onClick={() => setCreateDialog(true)}>Add Dokter</Button>
-//                 </DialogTrigger>
-
-//                 <DialogContent className="sm:max-w-md">
-//                     <form onSubmit={handleAddClient} className="space-y-4">
-//                         <DialogHeader>
-//                             <DialogTitle className="text-2xl font-bold">Add Client</DialogTitle>
-//                             <DialogDescription>Tambahkan Client Dengan Mengisi Form Berikut</DialogDescription>
-//                         </DialogHeader>
-//                         <div className="grid w-full gap-4">
-//                             <div className="grid w-full gap-1.5">
-//                                 <Label htmlFor="id_dokter">ID Dokter</Label>
-//                                 <Input id="id_dokter" name="id_dokter" placeholder="Masukkan ID Dokter" required />
-//                             </div>
-//                             <div className="grid w-full gap-1.5">
-//                                 <Label htmlFor="id_hewan">ID Hewan</Label>
-//                                 <Input id="id_hewan" name="id_hewan" placeholder="Masukkan ID Hewan" required />
-//                             </div>
-//                             <div className="grid w-full gap-1.5">
-//                                 <Label htmlFor="id_pemilik">ID Pemilik</Label>
-//                                 <Input id="id_pemilik" name="id_pemilik" placeholder="Masukkan ID Pemilik" required />
-//                             </div>
-//                         </div>
-//                         <DialogFooter>
-//                             <Button type="submit">submit</Button>
-//                         </DialogFooter>
-//                     </form>
-//                 </DialogContent>
-//             </Dialog>
-//         </div>
-
-
-//         <div>
-//             <Table>
-//                 <TableHeader>
-//                     <TableRow>
-//                         <TableHead className="text-neutral-700 font-bold">ID Dokter</TableHead>
-//                         <TableHead className="text-neutral-700 font-bold">ID Hewan</TableHead>
-//                         <TableHead className="text-neutral-700 font-bold">ID Pemilik</TableHead>
-//                     </TableRow>
-//                 </TableHeader>
-
-//                 <TableBody>
-//                   {dokter && dokter.length > 0 ? (
-//                     dokter.map(k => (
-//                     <TableRow key={k.id_dokter}>
-//                         <TableCell>{k.id_dokter}</TableCell>
-//                         <TableCell>{k.id_hewan}</TableCell>
-//                         <TableCell>{k.id_pemilik}</TableCell>
-//                         <TableCell>
-//                             <DropdownMenu>
-//                                 <DropdownMenuTrigger asChild className="cursor-pointer">
-//                                     <Ellipsis />
-//                                 </DropdownMenuTrigger>
-//                                 <DropdownMenuContent className="w-56">
-//                                     <DropdownMenuLabel className="font-bold">Action</DropdownMenuLabel>
-//                                     <DropdownMenuSeparator />
-//                                     <DropdownMenuGroup>
-//                                         <DropdownMenuItem onClick={() => setSelectedDokter({dokter: k, action: 'edit'})} >Edit</DropdownMenuItem>
-//                                         <DropdownMenuItem onClick={() => setSelectedDokter({dokter: k, action: 'delete'})} className="text-red-400">Delete</DropdownMenuItem>
-//                                     </DropdownMenuGroup>
-//                                 </DropdownMenuContent>
-//                             </DropdownMenu>
-//                         </TableCell>
-//                     </TableRow>
-//                     ))) : (
-//                     <TableRow>
-//                         <TableCell colSpan={10} className="text-center py-4">Loading...</TableCell>
-//                     </TableRow>
-//                     )}
-//                 </TableBody>
-//             </Table>
-//         </div>
-
-
-//         <Dialog open={selectedDokter !=null && selectedDokter.action === 'delete'} onOpenChange={(open) => {
-//             if (!open) {
-//                 setSelectedDokter(null);
-//             }
-//         }}>
-//             <DialogContent className="sm:max-w-md">
-//                 <DialogHeader>
-//                     <DialogTitle className="text-2xl font-bold">Delete Client</DialogTitle>
-//                         <DialogDescription>Apakah kamu yakin ingin menghapus client ini {selectedDokter?.dokter.id_Dokter}?</DialogDescription>
-//                 </DialogHeader>
-//                 <DialogFooter>
-//                     <Button onClick={handleDeleteClient} variant="destructive" className="cursor-pointer">Delete</Button>
-//                 </DialogFooter>
-//             </DialogContent>
-//         </Dialog>
-  
-//         <Dialog open={selectedDokter !=null && selectedDokter.action === 'edit'} onOpenChange={(open) => {
-//             if (!open) {
-//                 setSelectedDokter(null);
-//             }
-//         }}>  
-//             <DialogContent className="sm:max-w-md ">
-//                 <form onSubmit={handleEditClient} className="space-y-4">
-//                     <DialogHeader>
-//                         <DialogTitle className="text-2xl font-bold">Add Client</DialogTitle>
-//                         <DialogDescription className="sm:hidden">Tambahkan Client Dengan Mengisi Form Berikut</DialogDescription>
-//                     </DialogHeader>
-//                     <div className="grid w-full gap-4">
-//                         <div className="grid w-full gap-1.5">
-//                             <Label htmlFor="id_dokter">ID Dokter</Label>
-//                             <Input id="id_dokter" name="id_dokter" placeholder="Masukkan ID Dokter" required defaultValue={selectedDokter?.dokter.id_Dokter || ''}/>
-//                         </div>
-//                         <div className="grid w-full gap-1.5">
-//                             <Label htmlFor="id_hewan">ID Hewan</Label>
-//                             <Input id="id_hewan" name="id_hewan" placeholder="Masukkan ID Hewan" required defaultValue={selectedDokter?.dokter.id_hewan || ''}/>
-//                         </div>
-//                         <div className="grid w-full gap-1.5">
-//                             <Label htmlFor="id_pemilik">ID Pemilik</Label>
-//                             <Input id="id_pemilik" name="id_pemilik" placeholder="Masukkan ID Pemilik" required />
-//                         </div>
-//                     </div>
-//                     <DialogFooter>
-//                         <Button type="submit">submit</Button>
-//                     </DialogFooter>
-//                 </form>
-//             </DialogContent>
-//         </Dialog>
-//     </div>
-//     )
-// };
-// export default clientPage;
+export default pemilikPage;

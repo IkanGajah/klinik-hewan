@@ -2,17 +2,17 @@ import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 
 export default async function DetailPemilikPage({ params }: { params: { id: string } }) {
-  const idPemilik = params.id;
+  const { id } = await params;
 
   // FETCH SAKTI: Ambil Pemilik BESERTA Hewan-hewannya
   // Hewan(*) artinya: Ambil semua kolom dari tabel Hewan yang relasinya ke pemilik ini
   const { data: pemilik, error } = await supabase
-    .from('Pemilik')
+    .from('pemilik')
     .select(`
       *,
-      Hewan (*)
+      hewan (*)
     `)
-    .eq('id_pemilik', idPemilik)
+    .eq('id_pemilik', id)
     .single(); // .single() karena kita cuma cari 1 orang
 
   if (error || !pemilik) {
@@ -20,7 +20,7 @@ export default async function DetailPemilikPage({ params }: { params: { id: stri
   }
 
   // Karena Supabase mengembalikan data relasi sebagai array, kita tampung biar rapi
-  const daftarHewan = pemilik.Hewan || [];
+  const daftarHewan = pemilik.hewan || [];
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
