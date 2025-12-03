@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { useState, useEffect, FormEvent } from "react"
 import type { Ipemilik } from '@/types/pemilik';
-import {supabase} from '@/lib/supabase';
+import {createSupabaseClientForBrowser} from '@/lib/supabase';
 import { Ellipsis } from "lucide-react";
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,8 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle,DialogD
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import Link from 'next/link';
+
+const supabase = createSupabaseClientForBrowser();
 
 const pemilikPage = () => {
     const [createDialog, setCreateDialog] = useState(false);

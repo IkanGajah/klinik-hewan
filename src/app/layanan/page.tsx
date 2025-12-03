@@ -3,13 +3,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { FormEvent, useEffect, useState } from 'react';
 import type { Ijenis_layanan } from '../../types/jenis_layanan';
-import {supabase} from '@/lib/supabase';
+import {createSupabaseClientForBrowser} from '@/lib/supabase';
 import { Ellipsis } from "lucide-react";
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle,DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+
+const supabase = createSupabaseClientForBrowser();
 
 const layananPage = () => {
     const [layanan, setLayanan] = useState<Ijenis_layanan[]>([]);
@@ -30,7 +32,7 @@ const layananPage = () => {
 
     useEffect (() => { 
         fetch();
-    }, [supabase]);
+    }, []);
 
     const handleAddLayanan = async (e:FormEvent<HTMLFormElement>) => {
         e.preventDefault();

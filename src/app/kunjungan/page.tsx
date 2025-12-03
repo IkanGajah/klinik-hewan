@@ -6,13 +6,15 @@ import { FormEvent, useEffect, useState } from 'react';
 import type { Ikunjungan } from '@/types/kunjungan';
 import type { Ihewan } from '@/types/hewan';
 import type { Idokter } from '@/types/dokter';
-import {supabase} from '@/lib/supabase';
+import {createSupabaseClientForBrowser} from '@/lib/supabase';
 import { Ellipsis } from "lucide-react";
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle,DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+
+const supabase = createSupabaseClientForBrowser();
 
 const kunjunganPage = () => {
     const [kunjungan, setKunjungan] = useState<Ikunjungan[]>([]);
