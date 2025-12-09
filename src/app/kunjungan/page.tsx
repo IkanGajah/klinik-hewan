@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle,DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const supabase = createSupabaseClientForBrowser();
 
@@ -25,6 +26,7 @@ const kunjunganPage = () => {
         kunjungan: Ikunjungan;
         action: 'edit' | 'delete';
     } | null>(null);
+    
 
     const fetchMenu = async () => {
         const {data, error} = await supabase.from('kunjungan').select('*').order('id_kunjungan');  
@@ -166,7 +168,7 @@ const kunjunganPage = () => {
                                 </div>
                                 <div className="grid w-full gap-1.5">
                                     <Label htmlFor="tanggal_kunjungan">Tanggal Kunjungan</Label>
-                                    <Input id="tanggal_kunjungan" name="tanggal_kunjungan" placeholder="Masukkan Tanggal Kunjungan" required />
+                                    <Input id="tanggal_kunjungan" name="tanggal_kunjungan" type="date" placeholder="Masukkan Tanggal Kunjungan" required />
                                 </div>
                                 <div className="grid w-full gap-1.5">
                                     <Label htmlFor="berat_badan_saat_kunjungan">Berat Badan</Label>
@@ -193,7 +195,6 @@ const kunjunganPage = () => {
                 </Dialog>
             </div>
 
-
             <div>
                 <Table>
                     <TableHeader>
@@ -202,7 +203,7 @@ const kunjunganPage = () => {
                             <TableHead className="text-neutral-700 font-bold">ID Hewan</TableHead>
                             <TableHead className="text-neutral-700 font-bold">ID Dokter</TableHead>
                             <TableHead className="text-neutral-700 font-bold">Tanggal Kunjungan</TableHead>
-                            <TableHead className="text-neutral-700 font-bold">Berat Badan</TableHead>
+                            <TableHead className="text-neutral-700 font-bold">Berat Badan (Kg)</TableHead>
                             <TableHead className="text-neutral-700 font-bold">Keluhan Awal</TableHead>
                             <TableHead className="text-neutral-700 font-bold">Hasil Pemeriksaan</TableHead>
                             <TableHead className="text-neutral-700 font-bold">Diagnosa</TableHead>
@@ -229,6 +230,11 @@ const kunjunganPage = () => {
                                         <DropdownMenuLabel className="font-bold">Action</DropdownMenuLabel>
                                         <DropdownMenuSeparator />
                                         <DropdownMenuGroup>
+                                            <DropdownMenuItem>
+                                                <Link href={`/kunjungan/${k.id_kunjungan}`} className="w-full block">
+                                                    Pembayaran
+                                                </Link>
+                                            </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => setSelectedKunjungan({kunjungan: k, action: 'edit'})} >Edit</DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => setSelectedKunjungan({kunjungan: k, action: 'delete'})} className="text-red-400">Delete</DropdownMenuItem>
                                         </DropdownMenuGroup>
@@ -269,9 +275,9 @@ const kunjunganPage = () => {
             }}>  
                 <DialogContent className="sm:max-w-md">
                     <form onSubmit={handleEditKunjungan} className="space-y-4">
-                        <DialogHeader className="hidden">
-                            <DialogTitle className="text-2xl font-bold">Add Kunjungan</DialogTitle>
-                            <DialogDescription>Tambahkan Kunjungan Dengan Mengisi Form Berikut</DialogDescription>
+                        <DialogHeader>
+                            <DialogTitle className="text-2xl font-bold">Edit Kunjungan</DialogTitle>
+                            <DialogDescription>Edit Kunjungan Dengan Mengisi Form Berikut</DialogDescription>
                         </DialogHeader>
                         <div className="grid w-full gap-4">
                             <div className="grid w-full gap-1.5">

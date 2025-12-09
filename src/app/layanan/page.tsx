@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { FormEvent, useEffect, useState } from 'react';
 import type { Ijenis_layanan } from '../../types/jenis_layanan';
+import type { Idetail_layanan } from '../../types/detail_layanan';
 import {createSupabaseClientForBrowser} from '@/lib/supabase';
 import { Ellipsis } from "lucide-react";
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
@@ -13,20 +14,31 @@ import { toast } from "sonner";
 
 const supabase = createSupabaseClientForBrowser();
 
+interface LayananWithDetail extends Ijenis_layanan {
+    detail_layanan?: Array<{ harga_saat_layanan: number | string | null }>;
+}
+
 const layananPage = () => {
-    const [layanan, setLayanan] = useState<Ijenis_layanan[]>([]);
+    const [layanan, setLayanan] = useState<LayananWithDetail[]>([]);
     const [createDialog, setCreateDialog] = useState(false);    
     const [selectedLayanan, setSelectedLayanan] = useState<{
         layanan: Ijenis_layanan;
         action: 'edit' | 'delete';
     } | null>(null);
 
+    const formatCurrency = (v: number | string | null | undefined) => {
+        if (v == null || v === '') return '-';
+        const n = typeof v === 'string' ? Number(v) : v;
+        if (Number.isNaN(n)) return '-';
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(n);
+    };
+
     const fetch = async () => {
-      const {data, error} = await supabase.from('jenis_layanan').select('*');  
+      const {data, error} = await supabase.from('jenis_layanan').select('*, detail_layanan(harga_saat_layanan)').order('id_jenis_layanan');  
       if (error) {
         console.log('Error', error);
       } else {
-        setLayanan(data) ?? [];
+        setLayanan(data ?? []);
       }
     };
 
@@ -142,16 +154,18 @@ const layananPage = () => {
                         <TableHead className="text-neutral-700 font-bold">ID Layanan</TableHead>
                         <TableHead className="text-neutral-700 font-bold">Nama Layanan</TableHead>
                         <TableHead className="text-neutral-700 font-bold">Kategori</TableHead>
+                        <TableHead className="text-neutral-700 font-bold">Harga</TableHead>
                     </TableRow>
                 </TableHeader>
 
                 <TableBody>
                     {layanan && layanan.length > 0 ? (
-                    layanan.map((layanan: Ijenis_layanan) => (
+                    layanan.map((layanan: LayananWithDetail) => (
                     <TableRow key={layanan.id_jenis_layanan}>
                         <TableCell>{layanan.id_jenis_layanan}</TableCell>
                         <TableCell>{layanan.nama_layanan}</TableCell>
                         <TableCell>{layanan.kategori}</TableCell>
+                        <TableCell>{formatCurrency(layanan.detail_layanan?.[0]?.harga_saat_layanan)}</TableCell>
                         <TableCell>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild className="cursor-pointer">
@@ -170,7 +184,7 @@ const layananPage = () => {
                     </TableRow>
                     ))) : (
                       <TableRow>
-                        <TableCell colSpan={10} className="text-center py-4">No data available</TableCell>
+                        <TableCell colSpan={5} className="text-center py-4">No data available</TableCell>
                       </TableRow>
                     )}
                 </TableBody>
@@ -203,8 +217,8 @@ const layananPage = () => {
                 <DialogContent className="sm:max-w-md">
                     <form onSubmit={handleEditLayanan} className="space-y-4">
                         <DialogHeader>
-                            <DialogTitle className="text-2xl font-bold">Add Layanan</DialogTitle>
-                            <DialogDescription>Tambahkan Layanan Dengan Mengisi Form Berikut</DialogDescription>
+                            <DialogTitle className="text-2xl font-bold">Edit Layanan</DialogTitle>
+                            <DialogDescription>Edit Layanan Dengan Mengisi Form Berikut</DialogDescription>
                         </DialogHeader>
                         <div className="grid w-full gap-4">
                             <div className="grid w-full gap-1.5">

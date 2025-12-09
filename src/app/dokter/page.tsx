@@ -271,8 +271,8 @@ const dokterPage = () => {
                 <DialogContent className="sm:max-w-md">
                     <form onSubmit={handleEditDokter} className="space-y-4">
                         <DialogHeader>
-                            <DialogTitle className="text-2xl font-bold">Add Dokter</DialogTitle>
-                            <DialogDescription>Tambahkan Dokter Dengan Mengisi Form Berikut</DialogDescription>
+                            <DialogTitle className="text-2xl font-bold">Edit Dokter</DialogTitle>
+                            <DialogDescription>Edit Dokter Dengan Mengisi Form Berikut</DialogDescription>
                         </DialogHeader>
                         <div className="grid w-full gap-4">
                             <div className="grid w-full gap-1.5">

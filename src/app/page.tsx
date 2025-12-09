@@ -1,26 +1,25 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function DashboardPage() {
   return (
-    <div className="max-h-screen bg-gray-50 mx-auto container p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Dashboard Klinik Hewan</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Link href="/" className="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition border-l-4 border-blue-500">
-          <h2 className="text-xl font-semibold mb-2">📞 Buku Telepon</h2>
-          <p className="text-gray-600 text-sm">Cari kontak Dokter & Klien (Union).</p>
-        </Link>
-
-        <Link href="/dokter" className="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition border-l-4 border-green-500">
-          <h2 className="text-xl font-semibold mb-2">📊 Laporan Dokter</h2>
-          <p className="text-gray-600 text-sm">Lihat performa & keaktifan (Left Join).</p>
-        </Link>
-
-        <Link href="/kunjungan" className="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition border-l-4 border-purple-500">
-          <h2 className="text-xl font-semibold mb-2">🧾 Cetak Struk</h2>
-          <p className="text-gray-600 text-sm">Contoh cetak struk ID #1 (Inner Join).</p>
-        </Link>
-      </div>
-    </div>
+    <main>
+        <div className="pt-18 flex flex-col justify-center items-center text-center text-black px-4">
+          <Image src="/assetImage/hengker.jpg" alt="Profile" className="w-40 h-40 rounded-full shadow-lg border-4 border-black mb-6 object-cover" width={200} height={200} />
+          <h1 className="text-5xl font-bold mb-2">Klinik Hewan CP</h1>
+          <p className="text-lg">Klinik hewan dengan pengurus hewan</p>        
+        </div>
+        <div id="about" className="py-10 px-6 text-gray-800">   
+          <div className="max-w-5xl mx-auto text-center bg-white rounded-2xl p-6">
+            <h2 className="text-4xl font-bold mb-6">Selamat Datang!</h2>
+            <p className="mb-2 text-lg text-gray-600 ">Selamat datang, ini adalah web klinik hewan yang kami gunakan untuk memanajemen semua kegiatan yang berhubungan dengan klinik ini. 
+              Pusat dari web ini adalah halaman Kunjungan dimana kami menyimpan kunjungan yang dilakukan klien di klinik ini,
+              silahkan kunjungi halaman Kunjungan yang tersedia atau bisa klik tombol dibawah. 
+            </p>
+          </div>
+          <Link href='/kunjungan' className="px-1 py-2 mr-auto ml-auto max-w-5xl
+           text-2xl mt-10 bg-green-600 text-white outline-2 transition hover:bg-white hover:text-black font-bold rounded flex justify-center outline">Mulai dari sini!</Link>
+        </div>
+    </main>
   );
 }

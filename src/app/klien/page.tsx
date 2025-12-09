@@ -168,8 +168,8 @@ const pemilikPage = () => {
                 <TableRow>
                 <TableHead className="text-neutral-700 font-bold">ID Pemilik</TableHead>
                 <TableHead className="text-neutral-700 font-bold">Nama Pemilik</TableHead>
+                <TableHead className="text-neutral-700 font-bold">Alamat</TableHead>
                 <TableHead className="text-neutral-700 font-bold">Nomor Telepon</TableHead>
-                <TableHead className="text-neutral-700 font-bold">Aksi</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -230,8 +230,8 @@ const pemilikPage = () => {
                 <DialogContent className="sm:max-w-md">
                     <form onSubmit={handleEditPemilik} className="space-y-4">
                         <DialogHeader>
-                            <DialogTitle className="text-2xl font-bold">Add Pemilik</DialogTitle>
-                            <DialogDescription>Tambahkan Pemilik Dengan Mengisi Form Berikut</DialogDescription>
+                            <DialogTitle className="text-2xl font-bold">Edit Pemilik</DialogTitle>
+                            <DialogDescription>Edit Pemilik Dengan Mengisi Form Berikut</DialogDescription>
                         </DialogHeader>
                         <div className="grid w-full gap-4">
                             <div className="grid w-full gap-1.5">
