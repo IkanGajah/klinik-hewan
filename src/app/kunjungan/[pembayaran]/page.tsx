@@ -22,7 +22,7 @@ export default async function DetailKunjunganPage({
   if (error || !kunjungan) return <div>Data tidak ditemukan</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 print:bg-white print:p-0">
+    <div className="min-h-screen bg-gray-50 p-8 print:bg-white print:p-0 print:min-h-0 print:h-auto">
       
       {/* Tombol Back */}
       <div className="print:hidden mb-4">
