@@ -11,7 +11,7 @@ export default function Navbar() {
                     <Link href="/klien" className="text-sm">Klien </Link>
                     <Link href="/dokter" className="text-sm">Dokter</Link>
                     <Link href="/layanan" className="text-sm">Layanan</Link>
-                    <Link href="/buku" className="text-sm">Buku Telepon</Link>
+                    <Link href="/kontak" className="text-sm">Kontak</Link>
                 </nav>
             </div>
         </header>

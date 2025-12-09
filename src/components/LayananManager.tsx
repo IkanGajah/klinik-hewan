@@ -6,9 +6,9 @@ import { FormEvent, useEffect, useState } from 'react';
 import { createSupabaseClientForBrowser } from '@/lib/supabase';
 import { Ellipsis, Stethoscope, Plus } from "lucide-react";
 import { Idetail_layanan } from "@/types/detail_layanan";
-import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
+import { DropdownMenuItem, DropdownMenuSeparator, DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
@@ -34,7 +34,6 @@ interface IDetailLayanan {
 
 const LayananManager = ({ idKunjungan }: { idKunjungan: string | number }) => {
     const router = useRouter();
-    const [detail, setDetail ] = useState<Idetail_layanan | null>(null);
     const [listDetail, setListDetail] = useState<IDetailLayanan[]>([]);
     const [masterLayanan, setMasterLayanan] = useState<IMasterLayanan[]>([]);
     

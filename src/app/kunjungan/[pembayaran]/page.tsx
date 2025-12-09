@@ -42,13 +42,6 @@ export default async function DetailKunjunganPage({
 
 
         {/* BAGIAN 2: MANAGER LAYANAN (INPUT TINDAKAN) */}
-        {/* Class 'print:hidden' opsional. 
-            Jika kamu mau struknya mencetak rincian layanan dari sini, hapus print:hidden.
-            Tapi biasanya PembayaranManager di bawah sudah menampilkan rincian tagihan juga.
-            
-            Saran: Biarkan LayananManager tampil agar user bisa CRUD, 
-            tapi saat print, biarkan PembayaranManager yang menghandle tampilan "Struk Rapi".
-        */}
         <div className="bg-white p-6 rounded-lg shadow-md print:hidden">
            <LayananManager idKunjungan={kunjungan.id_kunjungan} />
         </div>

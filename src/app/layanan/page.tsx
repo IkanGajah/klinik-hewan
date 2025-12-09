@@ -3,7 +3,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button"
 import { FormEvent, useEffect, useState } from 'react';
 import type { Ijenis_layanan } from '../../types/jenis_layanan';
-import type { Idetail_layanan } from '../../types/detail_layanan';
 import {createSupabaseClientForBrowser} from '@/lib/supabase';
 import { Ellipsis } from "lucide-react";
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";

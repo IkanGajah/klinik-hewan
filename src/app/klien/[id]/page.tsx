@@ -5,7 +5,6 @@ import HewanManager from '@/components/HewanManager'; // Import komponen yang ba
 export default async function DetailPemilikPage({ params }: { params: { id: string } }) {
   const { id } = await params;
 
-  // Fetch Data Pemilik (Server Side)
   const { data: pemilik, error } = await supabaseServer
     .from('pemilik')
     .select('*')
@@ -24,7 +23,6 @@ export default async function DetailPemilikPage({ params }: { params: { id: stri
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         
-        {/* BAGIAN KIRI: INFO PEMILIK (Static) */}
         <div className="md:col-span-1">
           <div className="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
             <h2 className="text-xl font-bold mb-4">{pemilik.nama_pemilik}</h2>
@@ -35,10 +33,8 @@ export default async function DetailPemilikPage({ params }: { params: { id: stri
           </div>
         </div>
 
-        {/* BAGIAN KANAN: MANAJER HEWAN (Interactive Client Component) */}
         <div className="md:col-span-2">
           <div className="bg-white p-6 rounded-lg shadow-md">
-            {/* Panggil komponen HewanManager dan kirim ID Pemilik */}
             <HewanManager idPemilik={pemilik.id_pemilik} />
           </div>
         </div>
