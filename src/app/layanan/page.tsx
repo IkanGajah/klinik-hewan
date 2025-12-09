@@ -13,12 +13,8 @@ import { toast } from "sonner";
 
 const supabase = createSupabaseClientForBrowser();
 
-interface LayananWithDetail extends Ijenis_layanan {
-    detail_layanan?: Array<{ harga_saat_layanan: number | string | null }>;
-}
-
 const layananPage = () => {
-    const [layanan, setLayanan] = useState<LayananWithDetail[]>([]);
+    const [layanan, setLayanan] = useState<Ijenis_layanan[]>([]);
     const [createDialog, setCreateDialog] = useState(false);    
     const [selectedLayanan, setSelectedLayanan] = useState<{
         layanan: Ijenis_layanan;
@@ -33,7 +29,7 @@ const layananPage = () => {
     };
 
     const fetch = async () => {
-      const {data, error} = await supabase.from('jenis_layanan').select('*, detail_layanan(harga_saat_layanan)').order('id_jenis_layanan');  
+      const {data, error} = await supabase.from('jenis_layanan').select('*').order('id_jenis_layanan');  
       if (error) {
         console.log('Error', error);
       } else {
@@ -136,9 +132,13 @@ const layananPage = () => {
                                 <Label htmlFor="kategori">Kategori</Label>
                                 <Input id="kategori" name="kategori" placeholder="Masukkan Kategori" required />
                             </div>
+                            <div className="grid w-full gap-1.5">
+                                <Label htmlFor="harga_sekarang">Harga</Label>
+                                <Input id="harga_sekarang" name="harga_sekarang" placeholder="Masukkan Harga" required />
+                            </div>
                         </div>
                         <DialogFooter>
-                            <Button type="submit">Tambahkan</Button>
+                            <Button type="submit">Submit</Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>
@@ -159,12 +159,12 @@ const layananPage = () => {
 
                 <TableBody>
                     {layanan && layanan.length > 0 ? (
-                    layanan.map((layanan: LayananWithDetail) => (
+                    layanan.map((layanan: Ijenis_layanan) => (
                     <TableRow key={layanan.id_jenis_layanan}>
                         <TableCell>{layanan.id_jenis_layanan}</TableCell>
                         <TableCell>{layanan.nama_layanan}</TableCell>
                         <TableCell>{layanan.kategori}</TableCell>
-                        <TableCell>{formatCurrency(layanan.detail_layanan?.[0]?.harga_saat_layanan)}</TableCell>
+                        <TableCell>{layanan.harga_sekarang}</TableCell>
                         <TableCell>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild className="cursor-pointer">
@@ -232,9 +232,13 @@ const layananPage = () => {
                                 <Label htmlFor="kategori">Kategori</Label>
                                 <Input id="kategori" name="kategori" placeholder="Masukkan Kategori" required />
                             </div>
+                            <div className="grid w-full gap-1.5">
+                                <Label htmlFor="harga_sekarang">Harga</Label>
+                                <Input id="harga_sekarang" name="harga_sekarang" placeholder="Masukkan Harga" required />
+                            </div>
                         </div>
                         <DialogFooter>
-                            <Button type="submit">submit</Button>
+                            <Button type="submit">Submit</Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>

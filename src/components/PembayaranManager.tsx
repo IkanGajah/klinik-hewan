@@ -249,7 +249,7 @@ const PembayaranManager = ({ idKunjungan }: { idKunjungan: string | number }) =>
                                         </div>
                                     </div>
                                     <DialogFooter>
-                                        <Button type="submit">Simpan Pembayaran</Button>
+                                        <Button type="submit">Submit</Button>
                                     </DialogFooter>
                                 </form>
                             </DialogContent>
@@ -342,7 +342,7 @@ const PembayaranManager = ({ idKunjungan }: { idKunjungan: string | number }) =>
                                 <Input name="total_tagihan" type="number" defaultValue={selectedPembayaran?.data.total_tagihan} required />
                             </div>
                         </div>
-                        <DialogFooter><Button type="submit">Update</Button></DialogFooter>
+                        <DialogFooter><Button type="submit">Submit</Button></DialogFooter>
                     </form>
                 </DialogContent>
             </Dialog>

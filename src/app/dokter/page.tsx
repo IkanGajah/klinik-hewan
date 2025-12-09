@@ -156,7 +156,7 @@ const dokterPage = () => {
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button type="submit">Tambahkan</Button>
+                            <Button type="submit">Submit</Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>
@@ -293,7 +293,7 @@ const dokterPage = () => {
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button type="submit">submit</Button>
+                            <Button type="submit">Submit</Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>

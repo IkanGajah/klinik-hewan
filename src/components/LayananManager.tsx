@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { FormEvent, useEffect, useState } from 'react';
 import { createSupabaseClientForBrowser } from '@/lib/supabase';
 import { Ellipsis, Stethoscope, Plus } from "lucide-react";
+import { Ijenis_layanan } from "@/types/jenis_layanan";
 import { Idetail_layanan } from "@/types/detail_layanan";
 import { DropdownMenuItem, DropdownMenuSeparator, DropdownMenu, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
@@ -16,30 +17,14 @@ import { useRouter } from "next/navigation";
 
 const supabase = createSupabaseClientForBrowser();
 
-// Interface Master (Hanya Nama & Kategori, TANPA HARGA)
-interface IMasterLayanan {
-    id_jenis_layanan: string;
-    nama_layanan: string;
-    kategori: string;
-}
-
-// Interface Detail (Transaksi)
-interface IDetailLayanan {
-    id_detail_layanan: string;
-    id_kunjungan: string;
-    id_jenis_layanan: string;
-    harga_saat_layanan: number; // Harga diinput manual saat transaksi
-    jenis_layanan?: IMasterLayanan;
-}
-
 const LayananManager = ({ idKunjungan }: { idKunjungan: string | number }) => {
     const router = useRouter();
-    const [listDetail, setListDetail] = useState<IDetailLayanan[]>([]);
-    const [masterLayanan, setMasterLayanan] = useState<IMasterLayanan[]>([]);
-    
+    const [listDetail, setListDetail] = useState<Idetail_layanan[]>([]);
+    const [masterLayanan, setMasterLayanan] = useState<Ijenis_layanan[]>([]);
+    const [inputHarga, setInputHarga] = useState<string>('');
     const [createDialog, setCreateDialog] = useState(false);
     const [selectedItem, setSelectedItem] = useState<{
-        data: IDetailLayanan;
+        data: Idetail_layanan;
         action: 'edit' | 'delete';
     } | null>(null);
 
@@ -72,8 +57,6 @@ const LayananManager = ({ idKunjungan }: { idKunjungan: string | number }) => {
         fetchMaster();
         if (idKunjungan) fetchDetail();
     }, [idKunjungan]);
-
-    // --- CRUD ---
 
     const handleAdd = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -125,6 +108,19 @@ const LayananManager = ({ idKunjungan }: { idKunjungan: string | number }) => {
         }
     };
 
+    const handleSelectLayanan = (value: string) => {
+        const selectedId = String(value);
+        
+        const master = masterLayanan.find(m => m.id_jenis_layanan === selectedId);
+        
+        if (master && master.harga_sekarang) {
+            // Copy harga master ke input form
+            setInputHarga(String(master.harga_sekarang));
+        } else {
+            setInputHarga('');
+        }
+    };
+
     return (
         <div className="w-full py-6">
             <div className="mb-4 w-full flex justify-between items-center">
@@ -152,7 +148,7 @@ const LayananManager = ({ idKunjungan }: { idKunjungan: string | number }) => {
                                 </div>
                                 <div className="grid w-full gap-1.5">
                                     <Label>Jenis Layanan</Label>
-                                    <Select name="id_jenis_layanan" required>
+                                    <Select name="id_jenis_layanan" required onValueChange={handleSelectLayanan}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Pilih Layanan..." />
                                         </SelectTrigger>
@@ -160,6 +156,7 @@ const LayananManager = ({ idKunjungan }: { idKunjungan: string | number }) => {
                                             {masterLayanan.map((m) => (
                                                 <SelectItem key={m.id_jenis_layanan} value={String(m.id_jenis_layanan)}>
                                                     {m.nama_layanan} <span className="text-gray-400 text-xs">({m.kategori})</span>
+                                                    - ({formatIDR(m.harga_sekarang)})
                                                 </SelectItem>
                                             ))}
                                         </SelectContent>
@@ -171,16 +168,17 @@ const LayananManager = ({ idKunjungan }: { idKunjungan: string | number }) => {
                                     <Input 
                                         name="harga_saat_layanan" 
                                         type="number" 
-                                        placeholder="Masukkan harga..." 
+                                        value={inputHarga}
+                                        onChange={(e) => setInputHarga(e.target.value)} // User masih bisa edit 
                                         required 
                                     />
                                     <p className="text-xs text-gray-400">
-                                        *Wajib diisi manual sesuai tarif dokter.
+                                        *Harga otomatis terisi dari master, tapi bisa diubah.
                                     </p>
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button type="submit">Simpan</Button>
+                                <Button type="submit">Submit</Button>
                             </DialogFooter>
                         </form>
                     </DialogContent>
@@ -254,7 +252,7 @@ const LayananManager = ({ idKunjungan }: { idKunjungan: string | number }) => {
                                 <Input name="harga_saat_layanan" type="number" defaultValue={selectedItem?.data.harga_saat_layanan} required />
                             </div>
                         </div>
-                        <DialogFooter><Button type="submit">Update</Button></DialogFooter>
+                        <DialogFooter><Button type="submit">Submit</Button></DialogFooter>
                     </form>
                 </DialogContent>
             </Dialog>

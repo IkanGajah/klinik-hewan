@@ -188,7 +188,7 @@ const kunjunganPage = () => {
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button type="submit">submit</Button>
+                                <Button type="submit">Submit</Button>
                             </DialogFooter>
                         </form>
                     </DialogContent>
@@ -314,7 +314,7 @@ const kunjunganPage = () => {
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button type="submit">submit</Button>
+                            <Button type="submit">Submit</Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>

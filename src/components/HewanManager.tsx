@@ -174,7 +174,7 @@ const HewanManager = ({ idPemilik }: { idPemilik: string }) => {
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button type="submit">Tambahkan</Button>
+                                <Button type="submit">Submit</Button>
                             </DialogFooter>
                         </form>
                     </DialogContent>
@@ -297,7 +297,7 @@ const HewanManager = ({ idPemilik }: { idPemilik: string }) => {
                             </div>
                         </div>
                         <DialogFooter>
-                            <Button type="submit">Update</Button>
+                            <Button type="submit">Submit</Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>
