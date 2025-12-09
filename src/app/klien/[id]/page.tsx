@@ -2,6 +2,8 @@ import { supabaseServer } from '@/lib/supabase'; // Gunakan client server untuk 
 import Link from 'next/link';
 import HewanManager from '@/components/HewanManager'; // Import komponen yang baru dibuat
 
+export const dynamic = 'force-dynamic';
+
 export default async function DetailPemilikPage({ params }: { params: { id: string } }) {
   const { id } = await params;
 

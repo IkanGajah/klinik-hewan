@@ -3,6 +3,8 @@ import Link from 'next/link';
 import PembayaranManager from '@/components/PembayaranManager';
 import LayananManager from '@/components/LayananManager'; // Import komponen baru
 
+export const dynamic = 'force-dynamic';
+
 export default async function DetailKunjunganPage({ 
   params 
 }: { 
